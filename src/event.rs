@@ -7,6 +7,7 @@ use crate::{
     error::{Error, Result},
     transaction::{Attribute, Transaction},
 };
+use std::convert::TryInto;
 
 /// A custom event to be added to a transaction.
 #[must_use]
@@ -42,7 +43,7 @@ impl<'a> CustomEvent<'a> {
                 ffi::newrelic_custom_event_add_attribute_double(self.inner, name.as_ptr(), f)
             },
             Attribute::Long(l) => unsafe {
-                ffi::newrelic_custom_event_add_attribute_long(self.inner, name.as_ptr(), l)
+                ffi::newrelic_custom_event_add_attribute_long(self.inner, name.as_ptr(), l.try_into().unwrap())
             },
             Attribute::String(s) => {
                 let s = CString::new(s)?;

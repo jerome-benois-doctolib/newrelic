@@ -9,6 +9,7 @@ use crate::{
     event::CustomEvent,
     segment::{DatastoreParams, ExternalParams, Segment},
 };
+use std::convert::TryInto;
 
 /// A type of transaction monitored by New Relic.
 pub enum TransactionType {
@@ -136,7 +137,7 @@ impl Transaction {
                 ffi::newrelic_add_attribute_double(self.inner, name.as_ptr(), f)
             },
             Attribute::Long(l) => unsafe {
-                ffi::newrelic_add_attribute_long(self.inner, name.as_ptr(), l)
+                ffi::newrelic_add_attribute_long(self.inner, name.as_ptr(), l.try_into().unwrap())
             },
             Attribute::String(s) => {
                 let s = CString::new(s)?;
